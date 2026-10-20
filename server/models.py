@@ -1,5 +1,6 @@
 
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.ext.associationproxy import association_proxy
 
 db = SQLAlchemy()
 
@@ -11,6 +12,7 @@ class Exercise(db.Model):
     name = db.Column(db.String(100), nullable=False)
     category = db.Column(db.String(100), nullable=False)
     equipment_needed = db.Column(db.Boolean, nullable=False)
+    workouts = association_proxy("workout_exercises", "workout")
 
     def to_dict(self):
         return {
@@ -27,6 +29,7 @@ class Workout(db.Model):
     date = db.Column(db.Date, nullable=False)
     duration_minutes = db.Column(db.Integer, nullable=False)
     notes = db.Column(db.Text, nullable=True)  # Additional notes about the workout
+    exercises = association_proxy("workout_exercises", "exercise")
 
     def to_dict(self):
         return {
