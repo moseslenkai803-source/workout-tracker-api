@@ -1,6 +1,7 @@
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.orm import validates
 
 db = SQLAlchemy()
 
@@ -14,6 +15,18 @@ class Exercise(db.Model):
     equipment_needed = db.Column(db.Boolean, nullable=False)
     workouts = association_proxy("workout_exercises", "workout")
 
+    @validates("name")
+    def validate_name(self, key, value):
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError("Name cannot be empty.")
+        return value.strip()
+
+    @validates("category")
+    def validate_category(self, key, value):
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError("Category cannot be empty.")
+        return value.strip()
+
     def to_dict(self):
         return {
             "id": self.id,
@@ -21,6 +34,7 @@ class Exercise(db.Model):
             "category": self.category,
             "equipment_needed": self.equipment_needed,
         }
+
 
 class Workout(db.Model):
     __tablename__ = "workouts"
@@ -36,6 +50,12 @@ class Workout(db.Model):
     duration_minutes = db.Column(db.Integer, nullable=False)
     notes = db.Column(db.Text, nullable=True)  # Additional notes about the workout
     exercises = association_proxy("workout_exercises", "exercise")
+
+    @validates("duration_minutes")
+    def validate_duration_minutes(self, key, value):
+        if value <= 0:
+            raise ValueError("Workout duration must be greater than zero.")
+        return value
 
     def to_dict(self):
         return {
