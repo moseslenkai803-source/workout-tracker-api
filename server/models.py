@@ -24,6 +24,12 @@ class Exercise(db.Model):
 
 class Workout(db.Model):
     __tablename__ = "workouts"
+    __table_args__ = (
+        db.CheckConstraint(
+            "duration_minutes > 0",
+            name="ck_workouts_duration_positive",
+        ),
+    )
 
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, nullable=False)
@@ -41,6 +47,10 @@ class Workout(db.Model):
 
 class WorkoutExercise(db.Model):
     __tablename__ = "workout_exercises"
+    __table_args__ = (
+        db.CheckConstraint("sets > 0", name="ck_workout_exercises_sets_positive"),
+        db.CheckConstraint("reps > 0", name="ck_workout_exercises_reps_positive"),
+    )
 
     id = db.Column(db.Integer, primary_key=True)
     workout_id = db.Column(db.Integer, db.ForeignKey("workouts.id"), nullable=False)
