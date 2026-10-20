@@ -31,7 +31,6 @@ class Workout(db.Model):
     def to_dict(self):
         return {
             "id": self.id,
-            "name": self.name,
             "date": self.date.isoformat(),
             "duration_minutes": self.duration_minutes,
             "notes": self.notes,
